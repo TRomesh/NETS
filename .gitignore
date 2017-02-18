@@ -87,3 +87,7 @@ ENV/
 
 # Rope project settings
 .ropeproject
+
+
+LSTM_TSU/data/
+LSTM_TSU/result/
