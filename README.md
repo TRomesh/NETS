@@ -6,13 +6,13 @@ Donghyeon Kim and Jinhyuk Lee et al.
 * Python 3.5 or greater
 * TensorFlow r0.12.1 or greater, GPU enabled
 * Google Calendar API client
-* Numpy, gensim, nltk
+* Numpy, gensim, nltk, python-dateutil
 ```
 # Ubuntu 16.04 LTS
 $ sudo apt install python3-pip
 $ sudo pip3 install tensorflow-gpu
 $ sudo pip3 install --upgrade google-api-python-client
-$ sudo pip3 install numpy gensim nltk
+$ sudo pip3 install numpy gensim nltk python-dateutil
 ```
 
 # Clone this repository
@@ -28,7 +28,7 @@ $ cd NETS
 # (see https://developers.google.com/google-apps/calendar/quickstart/python)
 $ python3 get_google_caleandar_events.py
 ```
-* Check if <primary_calendar_id>_events.txt file is in __LSTM_TSU/data/inputs__ directory
+* Check if <primary_calendar_id>_events.txt file is in _LSTM_TSU/data/inputs_ directory
     * ex. primary@gmail.com_events.txt
 * Event fields
     * Example: 2017\t4\t60\tMeeting with Jake\t25
@@ -38,7 +38,7 @@ $ python3 get_google_caleandar_events.py
 
 
 # Get pre-trained word vectors
-* Download a .pickle file to __LSTM_TSU/data/embedding__ directory 
+* Download a .pickle file to _LSTM_TSU/data/embedding_ directory 
     * [Download](https://drive.google.com/uc?export=download&confirm=oasY&id=0B3aQGyHHaGQCZVJkUnh0eEZPQm8) GloVe (Jeffrey Pennington et al.) based word vectors (+ special characters, 300-dim, 59 MB, see [GloVe home](http://nlp.stanford.edu/projects/glove/))
   
 

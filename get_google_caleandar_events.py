@@ -10,7 +10,6 @@ from oauth2client.file import Storage
 import dateutil.parser
 from datetime import date
 from operator import itemgetter
-# import pickle
 
 # Based on https://developers.google.com/google-apps/calendar/quickstart/python
 
