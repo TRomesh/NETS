@@ -74,7 +74,7 @@ tf.app.flags.DEFINE_boolean('eval_last_step_only', False, 'True to evaluate only
 
 # File IO path
 tf.app.flags.DEFINE_string('calendar_data_dir', './data/inputs', 'Calendar data directory.')
-tf.app.flags.DEFINE_string('cal2vec_path', './data/embedding/glove_init (2-300) (special).pickle', 'Cal2vec path.')
+tf.app.flags.DEFINE_string('cal2vec_path', './data/embedding/glove_init_special.300d.pkl', 'Cal2vec path.')
 tf.app.flags.DEFINE_string('user2vec_path', './data/embedding/user_vectors (concat_sf_tf).336d.pkl', 'User2vec path.')
 tf.app.flags.DEFINE_string('avg2vec_path', './data/embedding/user_vectors (avg).336d.pkl', 'Averaged user2vec path.')
 tf.app.flags.DEFINE_string('user_list_path', './data/user_list (705).txt', 'User list path.')

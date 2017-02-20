@@ -4,8 +4,6 @@ import os
 from datetime import datetime
 import nltk
 import operator
-# from sklearn.manifold import TSNE
-from sklearn.decomposition import PCA
 
 
 def concat(user_slot_freq_vectors_pkl_path, user_title_word_freq_vectors_pkl_path, _output_dir, dim):
@@ -18,6 +16,7 @@ def concat(user_slot_freq_vectors_pkl_path, user_title_word_freq_vectors_pkl_pat
     concat_dict = dict()
     # assume both dictionaries have same user list
     for user_id in user_slot_freq_dict:
+        # print(len(user_slot_freq_dict.get(user_id)), len(user_title_freq_dict.get(user_id)))
         concat_dict[user_id] = np.concatenate((user_slot_freq_dict.get(user_id), user_title_freq_dict.get(user_id)),
                                               axis=0)
 
@@ -26,6 +25,14 @@ def concat(user_slot_freq_vectors_pkl_path, user_title_word_freq_vectors_pkl_pat
 
     pickle.dump(user_digest, open(output_path, "wb"))
     print('DONE', output_path)
+
+
+def get_user_num(_input_path):
+    user_count = 0
+    file_names = os.listdir(_input_path)
+    for _ in file_names:
+        user_count += 1
+    return user_count
 
 
 def write_user2vec_slot_freq(_input_path, _output_dir, _output_slot_n):
@@ -107,7 +114,7 @@ def write_title_word_freq(_input_path, _output_dir, _output_dim):
         print('Loading Cal2vec...', _cal2vec_path, end=' ')
         with open(_cal2vec_path, 'rb') as f:
             _final_embeddings, _reverse_dictionary, _dictionary, _count = pickle.load(f)
-            print('Done!', len(_dictionary))
+            print('Done!', 'dictionary size', len(_dictionary))
             return _final_embeddings, _reverse_dictionary, _dictionary, _count
 
     _, __, dictionary, ___ = load_cal2vec(cal2vec_g_path)
@@ -131,11 +138,12 @@ def write_title_word_freq(_input_path, _output_dir, _output_dim):
                     continue
                 event_num += 1
 
-                title_words = nltk.word_tokenize(event_features[4].replace('\t', ' '))
-                for word in title_words:
-                    word_freq = word_freq_dict.get(word)
-                    word_freq_dict[word] = 1 if word_freq is None else word_freq + 1
-
+                sentences = nltk.sent_tokenize(event_features[4].replace('\t', ' '))
+                for sentence in sentences:
+                    title_words = nltk.word_tokenize(sentence)
+                    for word in title_words:
+                        word_freq = word_freq_dict.get(word)
+                        word_freq_dict[word] = 1 if word_freq is None else word_freq + 1
                 week_set.add((event_features[0], event_features[1]))
 
         total_event_count += event_num
@@ -143,11 +151,8 @@ def write_title_word_freq(_input_path, _output_dir, _output_dim):
 
         cal2vec_word_id_freq_dict = dict()
         for word in word_freq_dict:
-            if word in dictionary:
-                word_id = dictionary[word]
-                word_set.add(word)
-            else:
-                word_id = dictionary['UNK']
+            word_id = dictionary[word if word in dictionary else'UNK']
+            word_set.add(word)
 
             word_count = word_freq_dict.get(word)
 
@@ -174,25 +179,29 @@ def write_title_word_freq(_input_path, _output_dir, _output_dim):
     print('#word_in_dictionary_set', len(word_set))
 
     print('\nDimensionality reduction..')
-    '''
-    # http://scikit-learn.org/stable/modules/generated/sklearn.manifold.TSNE.html
-    tsne = TSNE(n_components=output_dim, perplexity=30.0, early_exaggeration=4.0, learning_rate=1000.0, n_iter=1000,
-                n_iter_without_progress=30, min_grad_norm=1e-07, metric='euclidean', init='pca', verbose=0,
-                random_state=None, method='barnes_hut', angle=0.5)
-    dim_reduced_user_vector_list = tsne.fit_transform(user_vector_list)
-    '''
+    # np.seterr(divide='ignore', invalid='ignore')
+
+    # # http://scikit-learn.org/stable/modules/generated/sklearn.manifold.TSNE.html
+    # from sklearn.manifold import TSNE
+    # tsne = TSNE(n_components=_output_dim, perplexity=30.0, early_exaggeration=4.0, learning_rate=1000.0, n_iter=1000,
+    #             n_iter_without_progress=30, min_grad_norm=1e-07, metric='euclidean', init='random', verbose=0,
+    #             random_state=None, method='barnes_hut', angle=0.5)
+    # dim_reduced_user_vector_list = tsne.fit_transform(user_vector_list)
 
     # http://scikit-learn.org/stable/modules/generated/sklearn.decomposition.PCA.html
-    pca = PCA(n_components=_output_dim, copy=True, whiten=False, svd_solver='auto', tol=0.0, iterated_power='auto',
+    from sklearn.decomposition import PCA
+    pca = PCA(n_components=_output_dim, copy=True, whiten=False, svd_solver='randomized', tol=0.0, iterated_power='auto',
               random_state=None)
     dim_reduced_user_vector_list = pca.fit_transform(user_vector_list)
+
+    print(dim_reduced_user_vector_list)
 
     user_dict = dict()
     for uid, user2vec in zip(u_id_list, dim_reduced_user_vector_list):
         user_dict[uid] = user2vec
 
-    user_digest = ('user title word frequency vectors', _output_dim, user_dict)  # 0: name, 1: #slot,
-    # 2: user vector dictionary
+    # 0: name, 1: #slot, # 2: user vector dictionary
+    user_digest = ('user title word frequency vectors', _output_dim, user_dict)
     user_vectors_output_file = output_dir + '/user_vectors (title) (freq).%d' % _output_dim + 'd.pkl'
     pickle.dump(user_digest, open(user_vectors_output_file, "wb"))
     print('Saved', user_vectors_output_file)
@@ -203,6 +212,15 @@ if __name__ == "__main__":
     output_dim = 336
     input_path = './data/inputs'
     output_dir = './data/embedding'
-    user_vectors_slot_freq_output_file = write_user2vec_slot_freq(input_path, output_dir, output_dim // 2)
-    user_vectors_title_word_freq_output_file = write_title_word_freq(input_path, output_dir, output_dim // 2)
-    concat(user_vectors_slot_freq_output_file, user_vectors_title_word_freq_output_file, output_dir, output_dim)
+
+    user_num = get_user_num(input_path)
+    if user_num > 1:
+        user_vectors_slot_freq_output_file = write_user2vec_slot_freq(input_path, output_dir, output_dim // 2)
+        user_vectors_title_word_freq_output_file = write_title_word_freq(input_path, output_dir, output_dim // 2)
+        concat(user_vectors_slot_freq_output_file, user_vectors_title_word_freq_output_file, output_dir, output_dim)
+    elif user_num == 1:
+        import shutil
+        shutil.copy(write_user2vec_slot_freq(input_path, output_dir, output_dim),
+                    output_dir + '/user_vectors (concat_sf_tf).%d' % output_dim + 'd.pkl')
+    else:
+        print('Not found users', user_num)

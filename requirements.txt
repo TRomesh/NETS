@@ -1,0 +1,7 @@
+gensim
+google-api-python-client
+nltk
+numpy
+python-dateutil
+scikit-learn
+tensorflow-gpu>=0.12.1

@@ -33,15 +33,12 @@ def accuracy_score(labels, logits, indexes, params):
         accuracy = tf.reduce_mean(tf.cast(correct_prediction, dtype=tf.float32))
     else:
         tiled_indexes = tf.tile(tf.expand_dims(indexes-1, -1), [1, max_time_step])
-        sample_range = tf.transpose(tf.tile(tf.expand_dims(tf.range(0, max_time_step), -1), [1,
-            tf.shape(labels)[0]]))
+        sample_range = tf.transpose(tf.tile(tf.expand_dims(tf.range(0, max_time_step), -1), [1, tf.shape(labels)[0]]))
         index_mask = tf.less_equal(sample_range, tiled_indexes) 
-        correct_prediction = tf.equal(labels, tf.argmax(tf.reshape(logits, [tf.shape(labels)[0],
-            tf.shape(labels)[1], tf.shape(logits)[1]]), 2))
-        correct_prediction = tf.multiply(tf.cast(index_mask, tf.float32), tf.cast(correct_prediction,
-            tf.float32))
-        accuracy = tf.div(tf.reduce_sum(correct_prediction),  tf.cast(tf.reduce_sum(indexes),
-            tf.float32))
+        correct_prediction = tf.equal(labels, tf.argmax(tf.reshape(logits, [tf.shape(labels)[0], tf.shape(labels)[1],
+                                                                            tf.shape(logits)[1]]), 2))
+        correct_prediction = tf.multiply(tf.cast(index_mask, tf.float32), tf.cast(correct_prediction, tf.float32))
+        accuracy = tf.div(tf.reduce_sum(correct_prediction),  tf.cast(tf.reduce_sum(indexes), tf.float32))
 
     return accuracy
 
@@ -59,21 +56,17 @@ def top_n_accuracy_score(labels, logits, indexes, params):
         topn_accuracy = tf.reduce_mean(tf.cast(correct_prediction, dtype=tf.float32))
     else: 
         tiled_indexes = tf.tile(tf.expand_dims(indexes-1, -1), [1, max_time_step])
-        sample_range = tf.transpose(tf.tile(tf.expand_dims(tf.range(0, max_time_step), -1), [1, 
-            tf.shape(labels)[0]]))
+        sample_range = tf.transpose(tf.tile(tf.expand_dims(tf.range(0, max_time_step), -1), [1, tf.shape(labels)[0]]))
         index_mask = tf.less_equal(sample_range, tiled_indexes) 
         correct_prediction = tf.reshape(tf.nn.in_top_k(logits, tf.reshape(labels, [-1]), top_n),
-                [tf.shape(labels)[0], tf.shape(labels)[1]])
-        correct_prediction = tf.multiply(tf.cast(index_mask, tf.float32), tf.cast(correct_prediction,
-            tf.float32))
-        topn_accuracy = tf.div(tf.reduce_sum(correct_prediction),  tf.cast(tf.reduce_sum(indexes),
-            tf.float32))
+                                        [tf.shape(labels)[0], tf.shape(labels)[1]])
+        correct_prediction = tf.multiply(tf.cast(index_mask, tf.float32), tf.cast(correct_prediction, tf.float32))
+        topn_accuracy = tf.div(tf.reduce_sum(correct_prediction),  tf.cast(tf.reduce_sum(indexes), tf.float32))
     
     return topn_accuracy
 
 
-def linear(inputs, output_dim, dropout_rate=1.0, regularize_rate=0, activation=None, 
-        scope='Linear', reuse=None):
+def linear(inputs, output_dim, dropout_rate=1.0, activation=None, scope='Linear', reuse=None):
     with tf.variable_scope(scope, reuse=reuse) as scope:
         input_dim = inputs.get_shape()[-1]
         weights = tf.get_variable('Weights', [input_dim, output_dim],
@@ -99,4 +92,3 @@ def variable_summaries(var, name):
         tf.summary.scalar('max/' + name, tf.reduce_max(var))
         tf.summary.scalar('min/' + name, tf.reduce_min(var))
         tf.summary.histogram(name, var)
-

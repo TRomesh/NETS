@@ -71,4 +71,3 @@ class EventTitleCorpus(object):
                 words = event[3]  # already tokenized
                 # 0: user, 1: week, 5: sequence
                 yield TaggedDocument(words, [event[0] + '_' + event[1] + '_' + event[5]])
-

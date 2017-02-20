@@ -1,50 +1,68 @@
 # NETS: Neural Event Time Scheduler with Title, Slot, and User Embedding
 Donghyeon Kim and Jinhyuk Lee et al.
 
-# Pre-requisites
+# Prerequisites
 * GPU
-* Python 3.5 or greater
+* [Python 3.5 or greater](https://www.python.org/downloads/)
 * TensorFlow r0.12.1 or greater, GPU enabled
-* Google Calendar API client
-* Numpy, gensim, nltk, python-dateutil
+* A Google account, Google Calendar API client
+* Gensim, nltk, numpy, python-dateutil, scikit-learn
+    
 ```
 # Ubuntu 16.04 LTS
 $ sudo apt install python3-pip
 $ sudo pip3 install tensorflow-gpu
 $ sudo pip3 install --upgrade google-api-python-client
-$ sudo pip3 install numpy gensim nltk python-dateutil
+$ sudo pip3 install gensim nltk numpy python-dateutil scikit-learn
+```
+```
+# Mac and Windows
+$ sudo pip install tensorflow-gpu
+$ sudo pip install --upgrade google-api-python-client
+$ sudo pip install gensim nltk numpy python-dateutil scikit-learn
 ```
 
 # Clone this repository
 ```
 $ git clone https://github.com/donghyeonk/NETS.git
+```
+
+* Move to the project directory
+```
 $ cd NETS
 ```
 
-# Get your calendar events
-* From your Google calendar
-```  
-# Important: Download client_secret.json to the project folder before running google caleandar events getter
-# (see https://developers.google.com/google-apps/calendar/quickstart/python)
+# Get your calendar events from your Google calendar
+* Important: Download client_secret.json to the project folder before running google calendar events getter
+* (see [python quick start document](https://developers.google.com/google-apps/calendar/quickstart/python#step_1_turn_on_the_api_name))
+
+```
+# If your browser is on local machine
 $ python3 get_google_caleandar_events.py
 ```
-* Check if <primary_calendar_id>_events.txt file is in _LSTM_TSU/data/inputs_ directory
+```
+# If your browser is on different machine
+$ python3 get_google_caleandar_events.py --noauth_local_webserver
+```
+* Check if <primary_calendar_id>_events.txt file is in **LSTM_TSU/data/inputs** directory
     * ex. primary@gmail.com_events.txt
 * Event fields
-    * Example: 2017\t4\t60\tMeeting with Jake\t25
-    * Length 6, [year, week, sequence in a week, duration (min), title, start time slot (0~335)]
-    * Sorted by year, week and sequence
-    * Time slot unit: 30 min.
+    * Six columns: [year, week, sequence in a week, duration (min), title, start time slot (0~335)]
+        * e.g., 2017\t4\t60\tMeeting with Jake\t25
+    * Sorted by year, week and sequence in a week
+    * Time slot unit: 30 minutes
 
 
 # Get pre-trained word vectors
-* Download a .pickle file to _LSTM_TSU/data/embedding_ directory 
-    * [Download](https://drive.google.com/uc?export=download&confirm=oasY&id=0B3aQGyHHaGQCZVJkUnh0eEZPQm8) GloVe (Jeffrey Pennington et al.) based word vectors (+ special characters, 300-dim, 59 MB, see [GloVe home](http://nlp.stanford.edu/projects/glove/))
-  
+* Download a .pickle file to **LSTM_TSU/data/embedding** directory 
+    * [GloVe (Jeffrey Pennington et al.)](http://nlp.stanford.edu/projects/glove/) based word (+special characters) vectors (300-dim, 59 MB)
+```
+$ wget -P data/embedding/ https://s3-us-west-1.amazonaws.com/ml-man/glove_init_special.300d.pkl
+```
 
 # Create your user vector
+* Run after getting your events
 ```
-# Run after getting your events
 $ python3 user2vec.py
 ```
 

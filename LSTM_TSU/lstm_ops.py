@@ -96,10 +96,7 @@ def x_to_wsu(x_input, y_title, user_idx, params):
     print(x_reshape, str(dim_we + dim_se + dim_ue))
 
     # linear transformation
-    x_linear = linear(x_reshape, 
-            output_dim=dim_hidden,
-            activation=tf.nn.sigmoid,
-            scope='input-linear')
+    x_linear = linear(x_reshape, output_dim=dim_hidden, activation=tf.nn.sigmoid, scope='input-linear')
     x_split = tf.split(0, max_time_step, x_linear)
 
     return x_split

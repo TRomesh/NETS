@@ -10,6 +10,7 @@ from oauth2client.file import Storage
 import dateutil.parser
 from datetime import date
 from operator import itemgetter
+import sys
 
 # Based on https://developers.google.com/google-apps/calendar/quickstart/python
 
@@ -19,6 +20,9 @@ output_dir = './data/inputs'
 if not os.path.exists(output_dir):
     os.makedirs(output_dir)
 
+if not os.path.exists(CLIENT_SECRET_FILE):
+    print('Not found client_secret.json. See https://developers.google.com/google-apps/calendar/quickstart/python')
+    sys.exit(1)
 
 MINUTE_NORM = 30
 print_valid_events = False
@@ -211,17 +215,15 @@ def main():
     for fek in filtered_events_num:
         print('#filtered', fek, filtered_events_num.get(fek))
 
-    # write a pickle file
+    # write a file
     invalid_chars = ['\0', '\\', '/', '*', '?', '"', '<', '>', '|']  # Unix, Windows
-    valid_file_name = delete_invalid_chars_4_filename(primary_calendar_id, invalid_chars)
-    output_file = output_dir + '/' + valid_file_name + '_events.txt'
+    output_file = output_dir + '/' + delete_invalid_chars_4_filename(primary_calendar_id, invalid_chars) + '_events.txt'
     if os.path.exists(output_file):
         print('Overwrite existing file:', output_file)
     else:
-        print('Saved a file:', output_file)
+        print('Save a file:', output_file)
     # sort by year, week and register_sequence
     sorted_valid_events = sorted(valid_events, key=itemgetter(0, 1, 2))
-    # pickle.dump(sorted_valid_events, open(calendarId + '_events.pkl', "wb"))
     write_file(output_file, sorted_valid_events)
 
 if __name__ == '__main__':

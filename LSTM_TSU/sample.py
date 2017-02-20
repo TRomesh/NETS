@@ -74,8 +74,7 @@ for idx, (_logit, _label, _weight) in enumerate(zip(step_logits, step_labels, st
     prev_labels = step_labels[:idx]
     negative_loss = 0
     for prev_label in prev_labels:
-        negative_loss += (tf.nn.sparse_softmax_cross_entropy_with_logits(-_logit, prev_label) *
-                _weight)
+        negative_loss += (tf.nn.sparse_softmax_cross_entropy_with_logits(-_logit, prev_label) * _weight)
     
     # step_loss += negative_loss * 0.1
     loss_group.append(step_loss)
@@ -94,8 +93,8 @@ print(labels)
 print(indexes)
 
 if last_step_only and print_acc:
-    s, lo, la, cp, ac = sess.run([spread_indexes, gathered_logits, gathered_labels, correct_prediction,
-        accuracy], feed_dict=feed_dict)
+    s, lo, la, cp, ac = sess.run([spread_indexes, gathered_logits, gathered_labels, correct_prediction, accuracy],
+                                 feed_dict=feed_dict)
     print('spread indexes', s)
     print('gathered labels', la)
     print('gathered logits', lo)
@@ -103,7 +102,7 @@ if last_step_only and print_acc:
     print('accuracy', ac)
 elif print_acc:
     ti, sr, im, cp, ac = sess.run([tiled_indexes, sample_range, index_mask, correct_prediction, accuracy],
-            feed_dict=feed_dict)
+                                  feed_dict=feed_dict)
     print('tiled indexes', ti)
     print('sample range', sr)
     print('index mask', im)
@@ -112,8 +111,8 @@ elif print_acc:
 
 
 if print_loss:
-    lti, rti, w, l, nl, ls, pw = sess.run([lengths_tiled, range_tiled, step_weights, loss,
-        negative_loss, loss_sample, penaltied_weights], feed_dict=feed_dict)
+    lti, rti, w, l, nl, ls, pw = sess.run([lengths_tiled, range_tiled, step_weights, loss, negative_loss, loss_sample,
+                                           penaltied_weights], feed_dict=feed_dict)
     print('2 tiles')
     print(lti)
     print(rti)

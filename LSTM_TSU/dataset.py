@@ -28,18 +28,21 @@ def get_calendar_data(data_dir, user_list_path):
     total_event = 0
     max_year_week = 0
 
-    with open(user_list_path, 'r') as f:
-        for line in f:
-            user_list.append(line.strip())
+    found_user_list = os.path.exists(user_list_path)
 
-    print("Loading user list...", user_list_path, 'Done!')
+    if found_user_list:
+        print("Loading user list...", user_list_path, 'Done!')
+        with open(user_list_path, 'r') as f:
+            for line in f:
+                user_list.append(line.strip())
+
     print("Loading input data...", data_dir, end=' ')
 
     for subdir, _, files in os.walk(data_dir):
         for filename in sorted(files):
             file_path = os.path.join(subdir, filename)
             user_key = os.path.splitext(os.path.basename(filename))[0]
-            if user_key not in user_list:
+            if found_user_list and user_key not in user_list:
                 continue
 
             user = OrderedDict()
@@ -82,7 +85,7 @@ def get_calendar_data(data_dir, user_list_path):
 
 def get_data(params):
     # get parameters
-    user_size = params['user_size']
+    # user_size = params['user_size']
     data_dir = params['calendar_data_dir']
     user_list_path = params['user_list_path']
     cal2vec_path = params['cal2vec_path']
@@ -98,22 +101,23 @@ def get_data(params):
     # user vectors
     _, _, user2vec = pickle.load(open(user2vec_path, "rb"))
     print('Loading user vectors...', user2vec_path, 'Done!')
-    
-    # average user vectors
-    avg2vec = pickle.load(open(avg2vec_path, "rb"))
-    print('Loading average user vectors...', avg2vec_path, 'Done!')
-   
+
     # get calendar data
     users, user2idx, n_event = get_calendar_data(data_dir, user_list_path)
-    assert len(users) == user_size
+    # assert len(users) == user_size
+    params['user_size'] = len(users)
 
     # return only corresponding user's vector
     user_idx2vec = list()
-    for user_id in user2idx:
-        if cold_start:
+    if cold_start:
+        avg2vec = pickle.load(open(avg2vec_path, "rb"))
+        print('Loading average user vectors...', avg2vec_path, 'Done!')
+        for _ in user2idx:
             user_idx2vec.append(avg2vec)
-        else:
+    else:
+        for user_id in user2idx:
             user_idx2vec.append(user2vec.get(user_id))
+
     user2vec_set = [user_idx2vec, user2idx]
     
     common_data = []
