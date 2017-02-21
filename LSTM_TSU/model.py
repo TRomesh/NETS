@@ -52,9 +52,9 @@ class WSU_RnnModel(object):
             'idx2vec': user2vec_set[0],
             'user2idx': user2vec_set[1]
         }
-        self.initialize_embedding(
-                np.asarray(self.cal2vec['idx2vec'], dtype=np.float32),
-                np.asarray(self.user2vec['idx2vec'], dtype=np.float32))
+        embeddings = self.initialize_embedding(
+            np.asarray(self.cal2vec['idx2vec'], dtype=np.float32),
+            np.asarray(self.user2vec['idx2vec'], dtype=np.float32))
 
         # Input placeholders
         self.x = tf.placeholder(tf.int32, shape=[None, self.max_time_step, self.max_slot_num])
@@ -83,6 +83,7 @@ class WSU_RnnModel(object):
 
         self.saver = tf.train.Saver(tf.global_variables())
         self.session.run(tf.global_variables_initializer())
+        self.session.run(embeddings)
 
         # Check for initializer
         print("Word embedding initialized", self.get_word_embedding()[0][:5])
@@ -92,11 +93,7 @@ class WSU_RnnModel(object):
         print("User embedding initialized", self.get_user_embedding()[0][:5], 'prefix_prob_sum', user_prefix_prob_sum)
 
     def build_model(self):
-        self.logits = self.inference(self.x, 
-                self.y_title, 
-                self.seq_len, 
-                self.user_idx,
-                self.lstm_dropout)
+        self.logits = self.inference(self.x, self.y_title, self.seq_len, self.user_idx, self.lstm_dropout)
         self.cost = self.loss(self.y, self.logits, self.seq_len)
         self.optimize_op = self.optimize(self.cost)
         if self.ue_trainable and self.embed_user:
@@ -109,15 +106,17 @@ class WSU_RnnModel(object):
         lengths_tiled = tf.tile(tf.expand_dims(indexes-1, 1), [1, self.max_time_step])
         range_tiled = tf.tile(tf.expand_dims(tf.range(0, self.max_time_step), 0), [tf.shape(labels)[0], 1])
         step_weights = tf.transpose(tf.cast(tf.less_equal(range_tiled, lengths_tiled), dtype=tf.float32), [1, 0])
-        step_weights = tf.unpack(step_weights, self.max_time_step)
-        penaltied_weights = []
-        for idx, step_weight in enumerate(step_weights):
-            penaltied_weights.append(step_weight * ((idx+1) / len(step_weights)))
+        # step_weights = tf.unstack(step_weights, self.max_time_step)
+        # penaltied_weights = list()
+        # for idx, step_weight in enumerate(step_weights):
+        #     penaltied_weights.append(step_weight * ((idx+1) / len(step_weights)))
         step_logits = tf.reshape(logits, [-1, self.max_time_step, self.dim_output])
-        step_logits = tf.unpack(tf.transpose(step_logits, [1, 0, 2]), self.max_time_step)
-        step_labels = tf.unpack(tf.transpose(labels, [1, 0]), self.max_time_step)
+        # step_logits = tf.unstack(tf.transpose(step_logits, [1, 0, 2]), self.max_time_step)
+        # step_labels = tf.unstack(tf.transpose(labels, [1, 0]), self.max_time_step)
+        step_logits = tf.transpose(step_logits, [1, 0, 2])
+        step_labels = tf.transpose(labels, [1, 0])
 
-        loss = tf.nn.seq2seq.sequence_loss(
+        loss = tf.contrib.seq2seq.sequence_loss(
             step_logits,
             step_labels,
             step_weights,
@@ -141,7 +140,7 @@ class WSU_RnnModel(object):
         word_dict = self.cal2vec['word2idx']
         user_dict = self.user2vec['user2idx']
         cnt, total_acc1, total_acc5, total_loss = 0, 0.0, 0.0, 0.0
-        results = []
+        results = list()
         step = 0
 
         while not eou:
@@ -191,12 +190,18 @@ class WSU_RnnModel(object):
                                               trainable=self.we_trainable,
                                               dtype=tf.float32)
             slot_embeddings = tf.get_variable("slot_embedding",
-                                              initializer=tf.random_uniform([self.dim_input, self.dim_slot_embedding], -0.1, 0.1),
+                                              initializer=tf.random_uniform([self.dim_input, self.dim_slot_embedding],
+                                                                            -0.1, 0.1),
                                               dtype=tf.float32)
             user_embeddings = tf.get_variable("user_embedding",
                                               initializer=tf.constant(user_embed),
                                               trainable=self.ue_trainable,
                                               dtype=tf.float32)
+            embeddings = list()
+            embeddings.append(word_embeddings)
+            embeddings.append(slot_embeddings)
+            embeddings.append(user_embeddings)
+            return embeddings
 
     def get_word_embedding(self):
         with tf.variable_scope("embeds", reuse=True):

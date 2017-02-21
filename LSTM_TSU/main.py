@@ -32,6 +32,7 @@ tf.app.flags.DEFINE_float('train_ratio', 0.6, 'Dataset train ratio.')
 tf.app.flags.DEFINE_float('test_ratio', 0.4, 'Dataset test ratio.')
 tf.app.flags.DEFINE_float('seen_user_ratio', 0.605, 'Dataset seen user ratio.')
 tf.app.flags.DEFINE_float('past_event_ratio', 0.650, 'Dataset past event ratio.')
+tf.app.flags.DEFINE_float('early_stop', -1, 'Early stop threshold. Set negative integer to turn off')
 tf.app.flags.DEFINE_float('acc_top_n', 5, 'N of top N accuracy.')
 tf.app.flags.DEFINE_float('decay_rate', 0.95, 'Decay rate.')
 tf.app.flags.DEFINE_float('decay_step', 100, 'Decay steps.')
@@ -120,13 +121,11 @@ def experiment(clf, dataset, params):
     max_top1 = 0
     max_top5 = 0
     max_top1_epoch = 0
-    # test_epoch = 5      # Test for every 5 epochs
     total_duration = 0.
     nochange_cnt = 0
-    early_stop = 3
+    early_stop = params['early_stop']
 
     load_pretrained = params['load_pretrained']
-    # load_test = params['load_test']
     cold_start = params['cold_start']
     save = params['save']
     train = params['train']
@@ -135,7 +134,6 @@ def experiment(clf, dataset, params):
     load_model_name = params['load_model_name']
     save_model_name = params['save_model_name']
     train_epoch = params['train_epoch']
-    # embed_word = params['embed_word']
 
     train_data, valid_data, test_data = dataset 
     if not os.path.exists(checkpoint_dir):

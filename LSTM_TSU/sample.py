@@ -12,7 +12,7 @@ print_loss = True
 def get_sample_data():
     logits = np.random.uniform(0, 1, size=(batch_size * max_step, class_dim))
     labels = np.random.randint(class_dim, size=(batch_size, max_step))
-    indexes = np.random.randint(1, max_step + 1, size=(batch_size))
+    indexes = np.random.randint(1, max_step + 1, size=batch_size)
     return logits, labels, indexes
 
 
@@ -47,14 +47,14 @@ range_tiled = tf.tile(tf.expand_dims(tf.range(0, max_step), 0), [tf.shape(_label
 step_weights = tf.transpose(tf.cast(tf.less_equal(range_tiled, lengths_tiled), dtype=tf.float32), [1, 0])
 
 step_logits = tf.reshape(_logits, [-1, max_step, class_dim])
-step_logits = tf.unpack(tf.transpose(step_logits, [1, 0, 2]), max_step)
+step_logits = tf.unstack(tf.transpose(step_logits, [1, 0, 2]), max_step)
 print('logit reshaped', step_logits)
 
-step_labels = tf.unpack(tf.transpose(_labels, [1, 0]), max_step)
+step_labels = tf.unstack(tf.transpose(_labels, [1, 0]), max_step)
 print('label reshaped', step_labels)
-step_weights = tf.unpack(step_weights, max_step)
+step_weights = tf.unstack(step_weights, max_step)
 print('weight reshaped', step_weights)
-penaltied_weights = []
+penaltied_weights = list()
 for idx, step_weight in enumerate(step_weights):
     penaltied_weights.append(step_weight * ((idx+1) / len(step_weights)))
 print('weight penaltied', penaltied_weights)
@@ -67,14 +67,14 @@ loss = tf.nn.seq2seq.sequence_loss_by_example(
     average_across_timesteps=True)
 #    average_across_batch=True)
 
-loss_group = []
+loss_group = list()
 for idx, (_logit, _label, _weight) in enumerate(zip(step_logits, step_labels, step_weights)):
-    step_loss = tf.nn.sparse_softmax_cross_entropy_with_logits(_logit, _label) * _weight
+    step_loss = tf.nn.sparse_softmax_cross_entropy_with_logits(logits=_logit, labels=_label) * _weight
     
     prev_labels = step_labels[:idx]
     negative_loss = 0
     for prev_label in prev_labels:
-        negative_loss += (tf.nn.sparse_softmax_cross_entropy_with_logits(-_logit, prev_label) * _weight)
+        negative_loss += (tf.nn.sparse_softmax_cross_entropy_with_logits(logits=-_logit, labels=prev_label) * _weight)
     
     # step_loss += negative_loss * 0.1
     loss_group.append(step_loss)
@@ -122,4 +122,3 @@ if print_loss:
     print(l, np.mean(l))
     print(nl)
     print(ls)
-

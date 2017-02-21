@@ -4,7 +4,7 @@ Donghyeon Kim and Jinhyuk Lee et al.
 # Prerequisites
 * GPU
 * [Python 3.5 or greater](https://www.python.org/downloads/)
-* TensorFlow r0.12.1 or greater, GPU enabled
+* TensorFlow r1.0 or greater, GPU enabled
 * A Google account, Google Calendar API client
 * Gensim, nltk, numpy, python-dateutil, scikit-learn
     
@@ -34,7 +34,7 @@ $ cd NETS
 
 # Get your calendar events from your Google calendar
 * Important: Download client_secret.json to the project folder before running google calendar events getter
-* (see [python quick start document](https://developers.google.com/google-apps/calendar/quickstart/python#step_1_turn_on_the_api_name))
+* Please see [python quick start document](https://developers.google.com/google-apps/calendar/quickstart/python#step_1_turn_on_the_api_name)
 
 ```
 # If your browser is on local machine
@@ -61,13 +61,13 @@ $ wget -P data/embedding/ https://s3-us-west-1.amazonaws.com/ml-man/glove_init_s
 ```
 
 # Create your user vector
-* Run after getting your events
+* Run after getting your calendar events
 ```
 $ python3 user2vec.py
 ```
 
 # Run NETS
-* LSTM_TSU, output 168-class, warm start
+* LSTM_TSU, 1 hour based class (168), warm start
 ```
 $ python3 LSTM_TSU/main.py
 ```

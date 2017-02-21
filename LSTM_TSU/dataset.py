@@ -23,7 +23,7 @@ def load_cal2vec(_cal2vec_path):
 def get_calendar_data(data_dir, user_list_path):
     user_infos = list()
     user2idx = OrderedDict()
-    user_list = []
+    user_list = list()
     total_week = 0
     total_event = 0
     max_year_week = 0
@@ -85,7 +85,6 @@ def get_calendar_data(data_dir, user_list_path):
 
 def get_data(params):
     # get parameters
-    # user_size = params['user_size']
     data_dir = params['calendar_data_dir']
     user_list_path = params['user_list_path']
     cal2vec_path = params['cal2vec_path']
@@ -104,8 +103,11 @@ def get_data(params):
 
     # get calendar data
     users, user2idx, n_event = get_calendar_data(data_dir, user_list_path)
-    # assert len(users) == user_size
-    params['user_size'] = len(users)
+    user_cnt = len(users)
+    params['user_size'] = user_cnt
+    if user_cnt == 0:
+        print('Not found users')
+        return
 
     # return only corresponding user's vector
     user_idx2vec = list()
@@ -119,49 +121,57 @@ def get_data(params):
             user_idx2vec.append(user2vec.get(user_id))
 
     user2vec_set = [user_idx2vec, user2idx]
-    
-    common_data = []
-    unseen_data = []
-    recent_data = []
-    test_data = []
 
-    '''
-    # split based on train_ratio
+    train_data = list()
+    valid_data = list()
 
-    n_event_accumulate = 0
-    for user_idx, user_data in enumerate(users):
-        for data_idx, (week_idx, week_data) in enumerate(user_data.items()):
-            n_event_accumulate += len(week_data)
-            if data_idx < len(user_data) * past_event_ratio:
-                if n_event_accumulate < n_event * seen_user_ratio:
-                    common_data.append(week_data)
+    common_data = list()
+    unseen_data = list()
+    recent_data = list()
+    test_data = list()
+
+    if user_cnt > 1:
+        event_accumulator = 0
+        seen_ratio = 0.605
+        past_ratio = 0.650
+        for user_idx, (user_key, user_data, _, _) in enumerate(sorted(users, key=itemgetter(3))):
+            user_week_cnt = len(user_data)
+            for data_idx, (week_idx, week_data) in enumerate(user_data.items()):
+                event_accumulator += len(week_data)
+                if data_idx < user_week_cnt * past_ratio:
+                    if event_accumulator < n_event * seen_ratio:
+                        common_data.append(week_data)
+                    else:
+                        unseen_data.append(week_data)
                 else:
-                    unseen_data.append(week_data)
+                    if event_accumulator < n_event * seen_ratio:
+                        recent_data.append(week_data)
+                    else:
+                        test_data.append(week_data)
+
+        train_data = np.concatenate((common_data, (recent_data if cold_start else unseen_data)), axis=0)
+        valid_data = unseen_data if cold_start else recent_data
+
+        print('common_data', '#week', len(common_data), '#event', sum([len(wk) for wk in common_data]))
+        print('unseen_data', '#week', len(unseen_data), '#event', sum([len(wk) for wk in unseen_data]))
+        print('recent_data', '#week', len(recent_data), '#event', sum([len(wk) for wk in recent_data]))
+    else:  # single user
+        #  #week of train:valid:test = 6:2:2
+        train_ratio = 0.6
+        valid_ratio = 0.2
+        # test_ratio = 1 - train_ratio - valid_ratio
+
+        assert train_ratio + valid_ratio < 1., '%f %f' % (train_ratio, valid_ratio)
+
+        user0 = users[0]
+        user_week_cnt = len(user0[1])
+        for data_idx, (week_idx, week_data) in enumerate(user0[1].items()):
+            if data_idx < user_week_cnt * train_ratio:
+                train_data.append(week_data)
+            elif data_idx < user_week_cnt * (train_ratio + valid_ratio):
+                valid_data.append(week_data)
             else:
-                if n_event_accumulate < n_event * seen_user_ratio:
-                    recent_data.append(week_data)
-                else:
-                    test_data.append(week_data)
-    '''
-    event_accumulator = 0
-    seen_ratio = 0.605
-    past_ratio = 0.650
-    for user_idx, (user_key, user_data, _, _) in enumerate(sorted(users, key=itemgetter(3))):
-        for data_idx, (week_idx, week_data) in enumerate(user_data.items()):
-            event_accumulator += len(week_data)
-            if data_idx < len(user_data) * past_ratio:
-                if event_accumulator < n_event * seen_ratio:
-                    common_data.append(week_data)
-                else:
-                    unseen_data.append(week_data)
-            else:
-                if event_accumulator < n_event * seen_ratio:
-                    recent_data.append(week_data)
-                else:
-                    test_data.append(week_data)
-
-    train_data = np.concatenate((common_data, (recent_data if cold_start else unseen_data)), axis=0)
-    valid_data = unseen_data if cold_start else recent_data
+                test_data.append(week_data)
 
     if shuffle_data:
         shuffle(train_data)
@@ -175,22 +185,16 @@ def get_data(params):
                                                     sum([len(wk) for wk in valid_data])*100./n_event))
     print('\tTest : #week %d, #event %d, %.1f%%' % (len(test_data), sum([len(wk) for wk in test_data]),
                                                     sum([len(wk) for wk in test_data])*100./n_event))
-    print('common_data', '#week', len(common_data), '#event', sum([len(wk) for wk in common_data]))
-    print('unseen_data', '#week', len(unseen_data), '#event', sum([len(wk) for wk in unseen_data]))
-    print('recent_data', '#week', len(recent_data), '#event', sum([len(wk) for wk in recent_data]))
 
     return train_data, valid_data, test_data, cal2vec_set, user2vec_set
 
 
 def word_to_idx(title, max_length, dictionary):
-    idxes = []
+    idxes = list()
     for cnt, word in enumerate(nltk.word_tokenize(title)):
         if cnt >= max_length:
             break
-        if word in dictionary:
-            idxes.append(dictionary[word])
-        else:
-            idxes.append(dictionary['UNK'])
+        idxes.append(dictionary[word if word in dictionary else 'UNK'])
 
     while len(idxes) != max_length:
         idxes.append(-1)
@@ -204,7 +208,7 @@ def get_num_class(raw_class, num_input, num_week_slot):
 
 
 def get_duration_slots(event_features, before_slot, num_input, num_slot_raw, max_slot_num):
-    slots = []
+    slots = list()
     duration_slot_num = math.ceil(event_features[2] / (30 * num_slot_raw // num_input))
     if duration_slot_num == 1:
         slots.append(before_slot)
@@ -225,30 +229,27 @@ def get_duration_slots(event_features, before_slot, num_input, num_slot_raw, max
 
 def get_next_batch(week_set, user_dict, batch_sz, max_time_steps, word_dict, num_input, params):
     global week_itr
-    _batch_x = []
-    _batch_x_title = []
-    _batch_y = []
-    _batch_y_title = []
-    _batch_seq_len = []
-    _batch_user_idx = []
+    _batch_x = list()
+    _batch_x_title = list()
+    _batch_y = list()
+    _batch_y_title = list()
+    _batch_seq_len = list()
+    _batch_user_idx = list()
     eou_ = False
 
     max_slot_num = params['max_slot_num']
     dim_input = params['dim_input']
     num_week_slot = params['num_week_slot']
-    # dim_word_embedding = params['dim_word_embedding']
-    # embed_word = params['embed_word']
     max_title_length = params['max_title_len']
     
     while len(_batch_x) < batch_sz:
         for w_idx, events in enumerate(week_set):
             if w_idx < week_itr:
                 continue
-            x_pop_slot = []
-            # x_pop_title = []
-            y_pop_slot = []
-            y_pop_title = []
-            step_user_idx = []
+            x_pop_slot = list()
+            y_pop_slot = list()
+            y_pop_title = list()
+            step_user_idx = list()
             for idx in range(max_time_steps):  # for zero padding
                 if idx < len(events) - 1:
                     # print(idx, events[idx])
