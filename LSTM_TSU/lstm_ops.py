@@ -146,9 +146,7 @@ def pre_concat_lstm(x_input, x_length, lstm_dropout, params, scope):
         return output
 
 
-def pre_concat_mlp(x_input, lstm_dropout, params, scope):
-    # dim_rnn_cell = params['dim_rnn_cell']
-
+def pre_concat_mlp(x_input, scope):
     with tf.variable_scope(scope or 'mlp'):
         x_input = tf.transpose(tf.stack(x_input), [1, 0, 2])
         dim_input = x_input.get_shape().as_list()[-1]
@@ -157,7 +155,7 @@ def pre_concat_mlp(x_input, lstm_dropout, params, scope):
         return x_input
 
 
-def post_concat_mlp(x_input, y_title, x_length, user_idx, lstm_dropout, params, scope):
+def post_concat_mlp(x_input, y_title, user_idx, params, scope):
     user_size = params['user_size']
     dim_word_embedding = params['dim_word_embedding']
     dim_slot_embedding = params['dim_slot_embedding']

@@ -10,10 +10,10 @@ print_loss = True
 
 
 def get_sample_data():
-    logits = np.random.uniform(0, 1, size=(batch_size * max_step, class_dim))
-    labels = np.random.randint(class_dim, size=(batch_size, max_step))
-    indexes = np.random.randint(1, max_step + 1, size=batch_size)
-    return logits, labels, indexes
+    __logits = np.random.uniform(0, 1, size=(batch_size * max_step, class_dim))
+    __labels = np.random.randint(class_dim, size=(batch_size, max_step))
+    __indexes = np.random.randint(1, max_step + 1, size=batch_size)
+    return __logits, __labels, __indexes
 
 
 gpu_options = tf.GPUOptions(allow_growth=True)
@@ -23,6 +23,15 @@ _logits = tf.placeholder(tf.float32, shape=[None, class_dim])
 _labels = tf.placeholder(tf.int64, shape=[None, max_step])
 _indexes = tf.placeholder(tf.int32, shape=[None])
 
+
+spread_indexes = None
+gathered_labels = None
+gathered_logits = None
+
+tiled_indexes = None
+sample_range = None
+index_mask = None
+
 if last_step_only:
     spread_indexes = tf.range(0, tf.shape(_labels)[0]) * max_step + (_indexes - 1)
     gathered_labels = tf.gather(tf.reshape(_labels, [-1]), spread_indexes)
@@ -31,15 +40,12 @@ if last_step_only:
     accuracy = tf.reduce_mean(tf.cast(correct_prediction, dtype=tf.float32))
 else:
     tiled_indexes = tf.tile(tf.expand_dims(_indexes - 1, -1), [1, max_step])
-    sample_range = tf.transpose(tf.tile(tf.expand_dims(tf.range(0, max_step), -1), [1,
-        tf.shape(_labels)[0]]))
+    sample_range = tf.transpose(tf.tile(tf.expand_dims(tf.range(0, max_step), -1), [1, tf.shape(_labels)[0]]))
     index_mask = tf.less_equal(sample_range, tiled_indexes) 
-    correct_prediction = tf.equal(_labels, tf.argmax(tf.reshape(_logits, [tf.shape(_labels)[0],
-        tf.shape(_labels)[1], tf.shape(_logits)[1]]), 2))
-    correct_prediction = tf.multiply(tf.cast(index_mask, tf.float32), tf.cast(correct_prediction,
-        tf.float32))
-    accuracy = tf.div(tf.reduce_sum(correct_prediction),  tf.cast(tf.reduce_sum(_indexes),
-        tf.float32))
+    correct_prediction = tf.equal(_labels, tf.argmax(tf.reshape(_logits, [tf.shape(_labels)[0], tf.shape(_labels)[1],
+                                                                          tf.shape(_logits)[1]]), 2))
+    correct_prediction = tf.multiply(tf.cast(index_mask, tf.float32), tf.cast(correct_prediction, tf.float32))
+    accuracy = tf.div(tf.reduce_sum(correct_prediction),  tf.cast(tf.reduce_sum(_indexes), tf.float32))
 
 
 lengths_tiled = tf.tile(tf.expand_dims(_indexes-1, 1), [1, max_step])
@@ -60,7 +66,7 @@ for idx, step_weight in enumerate(step_weights):
 print('weight penaltied', penaltied_weights)
 
 
-loss = tf.nn.seq2seq.sequence_loss_by_example(
+loss = tf.contrib.seq2seq.sequence_loss_by_example(
     step_logits,
     step_labels,
     step_weights,
@@ -87,7 +93,7 @@ loss_sample = tf.reduce_sum(loss_sample) / batch_size
 sess.run(tf.global_variables_initializer())
 
 logits, labels, indexes = get_sample_data()
-feed_dict={_logits: logits, _labels: labels, _indexes: indexes}
+feed_dict = {_logits: logits, _labels: labels, _indexes: indexes}
 print(logits)
 print(labels)
 print(indexes)
