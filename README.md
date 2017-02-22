@@ -33,7 +33,7 @@ $ cd NETS
 ```
 
 # Get dataset from your Google calendar
-* Important: Download client_secret.json to the project folder before running google calendar events getter.
+* Important: Download client_secret.json to the project folder before running get_google_caleandar_events.py.
 * Please see [python quick start document](https://developers.google.com/google-apps/calendar/quickstart/python#step_1_turn_on_the_api_name).
 
 ```
@@ -44,11 +44,11 @@ $ python3 get_google_caleandar_events.py
 # If your browser is on different machine
 $ python3 get_google_caleandar_events.py --noauth_local_webserver
 ```
-* Check if <primary_calendar_id>_events.txt file is in **LSTM_TSU/data/inputs** directory.
+* Check if &lt;primary_calendar_id>_events.txt file is in **LSTM_TSU/data/inputs** directory.
     * ex. primary@gmail.com_events.txt
 * Event fields
     * Six columns: [year, week, sequence in a week, duration (min), title, start time slot (0~335)]
-        * e.g., 2017\t4\t60\tMeeting with Jake\t25
+        * e.g., 2017\t4\t0\t60\tMeeting with Jake\t25
     * Sorted by year, week and sequence in a week
     * Time slot unit: 30 minutes
 
