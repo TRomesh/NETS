@@ -7,20 +7,39 @@ Donghyeon Kim and Jinhyuk Lee et al.
 * TensorFlow r1.0 or greater, GPU enabled
 * A Google account, Google Calendar API client
 * Gensim, nltk, numpy, python-dateutil, scikit-learn
-    
+* Ubuntu 16.04 
 ```
-# Ubuntu 16.04 LTS
 $ sudo apt install python3-pip
 $ sudo pip3 install tensorflow-gpu
 $ sudo pip3 install --upgrade google-api-python-client
 $ sudo pip3 install gensim nltk numpy python-dateutil scikit-learn
 ```
+
+* Mac
 ```
-# Mac and Windows
 $ sudo pip install tensorflow-gpu
 $ sudo pip install --upgrade google-api-python-client
 $ sudo pip install gensim nltk numpy python-dateutil scikit-learn
 ```
+
+* Windows
+    * "TensorFlow only supports version 3.5.x of Python on Windows." [[TF home](https://www.tensorflow.org/install/install_windows)] 2017-2-23
+        * [Download python-3.5.3](https://www.python.org/ftp/python/3.5.3/python-3.5.3-amd64.exe) and install
+    * Download and install pre-built binaries:
+[numpy+mkl](http://www.lfd.uci.edu/~gohlke/pythonlibs/#numpy)
+[scipy](http://www.lfd.uci.edu/~gohlke/pythonlibs/#scipy)
+[gensim](http://www.lfd.uci.edu/~gohlke/pythonlibs/#gensim)
+[scikit-learn](http://www.lfd.uci.edu/~gohlke/pythonlibs/#scikit-learn)
+```
+# python 3.5.x 64-bit
+> pip install tensorflow-gpu
+> pip install nltk python-dateutil
+> pip install .\Downloads\numpy-1.12.0+mkl-cp35-cp35m-win_amd64.whl
+> pip install .\Downloads\scipy-0.18.1-cp35-cp35m-win_amd64.whl
+> pip install .\Downloads\gensim-0.13.4.1-cp35-cp35m-win_amd64.whl
+> pip install .\Downloads\scikit_learn-0.18.1-cp35-cp35m-win_amd64.whl
+```
+
 
 # Clone this repository
 ```
@@ -68,6 +87,7 @@ $ python3 user2vec.py
 
 # Run NETS
 * LSTM_TSU, 1 hour based class (168), warm start
+    * Results of the model could be different for each dataset.
 ```
 $ python3 LSTM_TSU/main.py
 ```

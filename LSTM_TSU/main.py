@@ -79,8 +79,8 @@ tf.app.flags.DEFINE_string('cal2vec_path', './data/embedding/glove_init_special.
 tf.app.flags.DEFINE_string('user2vec_path', './data/embedding/user_vectors (concat_sf_tf).336d.pkl', 'User2vec path.')
 tf.app.flags.DEFINE_string('avg2vec_path', './data/embedding/user_vectors (avg).336d.pkl', 'Averaged user2vec path.')
 tf.app.flags.DEFINE_string('user_list_path', './data/user_list (705).txt', 'User list path.')
-tf.app.flags.DEFINE_string('valid_result_path', './result/validation_' + datetime.now().strftime("%Y%m%d") + '.txt',
-                           'Validation results.')
+tf.app.flags.DEFINE_string('valid_result_path', os.getcwd() + '/result/validation_' + datetime.now().strftime("%Y%m%d")
+                           + '.txt', 'Validation results.')
 tf.app.flags.DEFINE_string('checkpoint_dir', os.getcwd() + '/result/model_' + datetime.now().strftime("%Y%m%d_%H%M%S")
                            + '_validate', 'Model save directory.')
 tf.app.flags.DEFINE_string('load_model_name', 'model.ckpt', 'When load is True, specify.')
