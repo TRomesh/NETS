@@ -10,7 +10,7 @@ Donghyeon Kim and Jinhyuk Lee et al.
 * A Google account, Google Calendar API client
 * Gensim, nltk, numpy, python-dateutil, scikit-learn
 
-# Prerequisites Installation
+# Prerequisites Installation Guide
 * Linux: Ubuntu 16.04 LTS
 ```
 $ sudo apt install python3-pip
@@ -56,7 +56,7 @@ $ cd NETS
 ```
 
 # Get dataset from your Google calendar
-* Important: Download client_secret.json to the project folder before running get_google_caleandar_events.py.
+* Important: Download client_secret.json to the project folder before running get_google_calendar_events.py.
 * Please see [python quick start document](https://developers.google.com/google-apps/calendar/quickstart/python#step_1_turn_on_the_api_name).
 
 ```
