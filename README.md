@@ -3,11 +3,15 @@ Donghyeon Kim and Jinhyuk Lee et al.
 
 # Prerequisites
 * GPU
-* [Python 3.5 or greater](https://www.python.org/downloads/)
+* Python
+    * Linux or Mac OS: [Python 3.4 or greater](https://www.python.org/downloads/)
+    * Windows: [Python 3.5 or greater](https://www.python.org/downloads/)
 * TensorFlow r1.0 or greater, GPU enabled
 * A Google account, Google Calendar API client
 * Gensim, nltk, numpy, python-dateutil, scikit-learn
-* Ubuntu 16.04 
+
+# Prerequisites Installation
+* Linux: Ubuntu 16.04 LTS
 ```
 $ sudo apt install python3-pip
 $ sudo pip3 install tensorflow-gpu
@@ -15,7 +19,7 @@ $ sudo pip3 install --upgrade google-api-python-client
 $ sudo pip3 install gensim nltk numpy python-dateutil scikit-learn
 ```
 
-* Mac
+* Mac OS
 ```
 $ sudo pip install tensorflow-gpu
 $ sudo pip install --upgrade google-api-python-client
