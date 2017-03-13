@@ -81,7 +81,7 @@ tf.app.flags.DEFINE_string('avg2vec_path', './data/embedding/user_vectors (avg).
 tf.app.flags.DEFINE_string('user_list_path', './data/user_list (705).txt', 'User list path.')
 tf.app.flags.DEFINE_string('valid_result_path', './result/validation_' + datetime.now().strftime("%Y%m%d") + '.txt',
                            'Validation results.')
-tf.app.flags.DEFINE_string('checkpoint_dir', os.getcwd() + '/result/pretrained', 'Model save directory.')
+tf.app.flags.DEFINE_string('checkpoint_dir', './result/pretrained', 'Model save directory.')
 tf.app.flags.DEFINE_string('load_model_name', 'model.ckpt-1809', 'When load is True, specify.')
 tf.app.flags.DEFINE_string('save_model_name', 'save.ckpt', 'When save is True, specify.')
 
@@ -209,7 +209,7 @@ def main(_):
         os.mkdir(os.getcwd() + '/result')
     validation_writer = open(saved_params['valid_result_path'], 'a')
     model_name = 'MLP_' if saved_params['mlp'] else 'LSTM_'
-    model_name += 'W' if saved_params['embed_word'] else ''
+    model_name += 'T' if saved_params['embed_word'] else ''
     model_name += 'S' if saved_params['embed_slot'] else 'X'
     model_name += 'U' if saved_params['embed_user'] else ''
 

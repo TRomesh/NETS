@@ -44,7 +44,6 @@ $ sudo pip install gensim nltk numpy python-dateutil scikit-learn
 > pip install .\Downloads\scikit_learn-0.18.1-cp35-cp35m-win_amd64.whl
 ```
 
-
 # Clone this repository
 ```
 $ git clone https://github.com/donghyeonk/NETS.git
@@ -55,10 +54,12 @@ $ git clone https://github.com/donghyeonk/NETS.git
 $ cd NETS
 ```
 
-# Get dataset from your Google calendar
-* Important: Download client_secret.json to the project folder before running get_google_calendar_events.py.
-* Please see [python quick start document](https://developers.google.com/google-apps/calendar/quickstart/python#step_1_turn_on_the_api_name).
 
+
+# Create your user vector
+* Get dataset from your Google calendar
+    * Important: Download client_secret.json to the project folder before running get_google_calendar_events.py.
+    * Please see [python quick start document](https://developers.google.com/google-apps/calendar/quickstart/python#step_1_turn_on_the_api_name).
 ```
 # If your browser is on local machine
 $ python3 get_google_caleandar_events.py
@@ -75,23 +76,28 @@ $ python3 get_google_caleandar_events.py --noauth_local_webserver
     * Sorted by year, week and sequence in a week
     * Time slot unit: 30 minutes
 
-
-# Get pre-trained word vectors
-* Download a word vector file to **LSTM_TSU/data/embedding** directory. 
-    * [GloVe (Jeffrey Pennington et al.)](http://nlp.stanford.edu/projects/glove/) based word (+special characters) vectors (300-dim, 59 MB)
-```
-$ wget -P data/embedding/ https://s3-us-west-1.amazonaws.com/ml-man/glove_init_special.300d.pkl
-```
-
-# Create your user vector
-* Run after getting your calendar events.
+* Finally, you can create your user vector
 ```
 $ python3 user2vec.py
 ```
 
-# Run NETS
-* LSTM_TSU, 1 hour based class (168), warm start
+# Get pre-trained word vectors, an averaged user vector, and a pre-trained model
+* [GloVe (Jeffrey Pennington et al.)](http://nlp.stanford.edu/projects/glove/) based word (+special characters) vectors (300-dim, 59 MB)
+* An averaged user vector for cold start (336-dim, 3 KB) 
+* A pre-trained TensorFlow model (138 MB)
+```
+$ sh download_pretrained.sh
+```
+
+# Run LSTM_TSU
+* Move to LSTM_TSU directory.
+```
+$ cd LSTM_TSU
+```
+
+* Run main.py
+    * Default: One-hour based class (168), cold start, an averaged user vector
     * Results of the model could be different for each dataset.
 ```
-$ python3 LSTM_TSU/main.py
+$ python3 main.py
 ```

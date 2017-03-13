@@ -210,8 +210,8 @@ def write_title_word_freq(_input_path, _output_dir, _output_dim):
 
 if __name__ == "__main__":
     output_dim = 336
-    input_path = './data/inputs'
-    output_dir = './data/embedding'
+    input_path = 'LSTM_TSU/data/inputs'
+    output_dir = 'LSTM_TSU/data/embedding'
 
     user_num = get_user_num(input_path)
     if user_num > 1:

@@ -16,7 +16,7 @@ import sys
 
 CLIENT_SECRET_FILE = 'client_secret.json'  # Use your secret file
 calendarId = 'primary'  # Use calendar 'ID' unless primary
-output_dir = './data/inputs'
+output_dir = 'LSTM_TSU/data/inputs'
 if not os.path.exists(output_dir):
     os.makedirs(output_dir)
 
