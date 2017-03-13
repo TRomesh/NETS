@@ -239,15 +239,10 @@ class WSU_LstmModel(WSU_RnnModel):
         super(WSU_LstmModel, self).__init__(params, initializer)
 
     def inference(self, x, y_title, x_length, user_idx, lstm_dropout):
-        pre_concat = pre_concat_lstm(x_to_wsu(x, y_title, user_idx, self.params),
-                x_length, 
-                lstm_dropout, 
-                self.params, 
-                scope='pre-concat')
+        pre_concat = pre_concat_lstm(x_to_wsu(x, y_title, user_idx, self.params), x_length, lstm_dropout, self.params,
+                                     scope='pre-concat')
         print('pre-concat' if self.pre_concat else 'post-concat', 'version')
-        output = linear(pre_concat if self.pre_concat else post_concat,
-                output_dim=self.dim_output,
-                scope='Output')
+        output = linear(pre_concat if self.pre_concat else post_concat, output_dim=self.dim_output, scope='Output')
         return output
 
     def optimize(self, cost):
@@ -266,28 +261,18 @@ class WSU_MlpModel(WSU_RnnModel):
         super(WSU_MlpModel, self).__init__(params, initializer)
 
     def inference(self, x, y_title, x_length, user_idx, lstm_dropout):
-        pre_concat = pre_concat_mlp(x_to_wsu(x, y_title, user_idx, self.params),
-                lstm_dropout,
-                self.params,
-                scope='pre-concat')
+        pre_concat = pre_concat_mlp(x_to_wsu(x, y_title, user_idx, self.params), scope='pre-concat')
         '''
         post_concat = post_concat_mlp(x_to_s(x, self.params),
                 y_title,
-                x_length,
                 user_idx,
-                lstm_dropout,
                 self.params,
                 scope='post-concat')
         '''
-        hidden = linear(pre_concat,
-                output_dim=self.dim_hidden,
-                dropout_rate=lstm_dropout,
-                activation=tf.nn.relu,
-                scope='Hiddden')
+        hidden = linear(pre_concat, output_dim=self.dim_hidden, dropout_rate=lstm_dropout, activation=tf.nn.relu,
+                        scope='Hiddden')
         
-        output = linear(dropout(pre_concat, lstm_dropout),
-                output_dim=self.dim_output,
-                scope='Output')
+        output = linear(dropout(pre_concat, lstm_dropout), output_dim=self.dim_output, scope='Output')
         return output
 
     def optimize(self, cost):
