@@ -42,8 +42,8 @@ def get_calendar_data(data_dir, user_list_path):
         for filename in sorted(files):
             file_path = os.path.join(subdir, filename)
             user_key = os.path.splitext(os.path.basename(filename))[0]
-            if found_user_list and user_key not in user_list:
-                continue
+            # if found_user_list and user_key not in user_list:
+            #     continue
 
             user = OrderedDict()
             user_event_num = 0
@@ -92,6 +92,7 @@ def get_data(params):
     avg2vec_path = params['avg2vec_path']
     shuffle_data = params['shuffle_data']
     cold_start = params['cold_start']
+    is_test = params['test']
 
     # word vectors
     cal2vec_set = load_cal2vec(cal2vec_path)
@@ -104,7 +105,7 @@ def get_data(params):
     # get calendar data
     users, user2idx, n_event = get_calendar_data(data_dir, user_list_path)
     user_cnt = len(users)
-    params['user_size'] = user_cnt
+    # params['user_size'] = user_cnt
     if user_cnt == 0:
         print('Not found users')
         return
@@ -114,7 +115,7 @@ def get_data(params):
     if cold_start:
         avg2vec = pickle.load(open(avg2vec_path, "rb"))
         print('Loading average user vectors...', avg2vec_path, 'Done!')
-        for _ in user2idx:
+        for _ in range(params['user_size']):
             user_idx2vec.append(avg2vec)
     else:
         for user_id in user2idx:
@@ -177,6 +178,9 @@ def get_data(params):
         shuffle(train_data)
         shuffle(valid_data)
         shuffle(test_data)
+
+    if is_test:
+        test_data = np.concatenate((train_data, valid_data, test_data), axis=0)
 
     print('\t%s start task' % ('Cold' if cold_start else 'Warm'))
     print('\tTrain: #week %d, #event %d, %.1f%%' % (len(train_data), sum([len(wk) for wk in train_data]),

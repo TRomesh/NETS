@@ -58,19 +58,19 @@ tf.app.flags.DEFINE_integer('lstm_layer_max', 1, 'Maximum number of layers in LS
 # Model, task settings
 tf.app.flags.DEFINE_boolean('default_params', True, 'True to use default hyper parameters.')
 tf.app.flags.DEFINE_boolean('shuffle_data', True, 'True to shuffle dataset')
-tf.app.flags.DEFINE_boolean('cold_start', False, 'True(False) to make the task cold(warm) start.')
+tf.app.flags.DEFINE_boolean('cold_start', True, 'True(False) to make the task cold(warm) start.')
 tf.app.flags.DEFINE_boolean('pre_concat', True, 'True(False) to make the model pre(post) concat.')
 tf.app.flags.DEFINE_boolean('embed_word', True, 'True(False) to embed word.')
 tf.app.flags.DEFINE_boolean('embed_slot', True, 'True(False) to embed slot.')
 tf.app.flags.DEFINE_boolean('embed_user', True, 'True(False) to embed user.')
 tf.app.flags.DEFINE_boolean('mlp', False, 'True(False) to make lstm to mlp.')
 tf.app.flags.DEFINE_boolean('we_trainable', False, 'True(False) to make cal2vec trainable.')
-tf.app.flags.DEFINE_boolean('ue_trainable', False, 'True(False) to make user2vec trainable.')
-tf.app.flags.DEFINE_boolean('load_pretrained', False, 'True to load pretrained model.')
+tf.app.flags.DEFINE_boolean('ue_trainable', True, 'True(False) to make user2vec trainable.')
+tf.app.flags.DEFINE_boolean('load_pretrained', True, 'True to load pretrained model.')
 tf.app.flags.DEFINE_boolean('load_test', False, 'True to load saved model when testing.')
 tf.app.flags.DEFINE_boolean('save', False, 'True to save trained model')
-tf.app.flags.DEFINE_boolean('train', True, 'True to train model')
-tf.app.flags.DEFINE_boolean('test', False, 'True to test model')
+tf.app.flags.DEFINE_boolean('train', False, 'True to train model')
+tf.app.flags.DEFINE_boolean('test', True, 'True to test model')
 tf.app.flags.DEFINE_boolean('eval_last_step_only', False, 'True to evaluate only last steps of RNN')
 
 # File IO path
@@ -81,9 +81,8 @@ tf.app.flags.DEFINE_string('avg2vec_path', './data/embedding/user_vectors (avg).
 tf.app.flags.DEFINE_string('user_list_path', './data/user_list (705).txt', 'User list path.')
 tf.app.flags.DEFINE_string('valid_result_path', './result/validation_' + datetime.now().strftime("%Y%m%d") + '.txt',
                            'Validation results.')
-tf.app.flags.DEFINE_string('checkpoint_dir', os.getcwd() + '/result/model_' + datetime.now().strftime("%Y%m%d_%H%M%S")
-                           + '_validate', 'Model save directory.')
-tf.app.flags.DEFINE_string('load_model_name', 'model.ckpt', 'When load is True, specify.')
+tf.app.flags.DEFINE_string('checkpoint_dir', os.getcwd() + '/result/pretrained', 'Model save directory.')
+tf.app.flags.DEFINE_string('load_model_name', 'model.ckpt-1809', 'When load is True, specify.')
 tf.app.flags.DEFINE_string('save_model_name', 'save.ckpt', 'When save is True, specify.')
 
 
