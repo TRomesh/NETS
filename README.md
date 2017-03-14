@@ -115,7 +115,7 @@ Slot embedding initialized `[-0.01252203  0.04094937  0.03608277  0.03158236 -0.
 
 User embedding initialized `[ 0.00049178  0.00017338  0.00033416  0.00013555  0.00031524]` prefix_prob_sum 1.00000000202
 
-Resuming! => Model restored from /home/<YOUR_HOME>/NETS/LSTM_TSU/result/pretrained/model.ckpt-1809
+Resuming! => Model restored from /home/&lt;YOUR_HOME>/NETS/LSTM_TSU/result/pretrained/model.ckpt-1809
 
 Input 168 output 168
 
@@ -123,10 +123,10 @@ Input 168 output 168
 
 \### TESTING ###
 
-Model restored from /home/<YOUR_HOME>/NETS/LSTM_TSU/result/pretrained/model.ckpt-1809
+Model restored from /home/&lt;YOUR_HOME>/NETS/LSTM_TSU/result/pretrained/model.ckpt-1809
 
 Testing loss: 3.916 Top1 Accuracy: 7.609% Top5 Accuracy: 26.087% step: 1809
 
-Elapsed Time: 0.00 Minutes <END_TIME>
+Elapsed Time: 0.00 Minutes &lt;END_TIME>
 
 \### END OF TESTING ###
