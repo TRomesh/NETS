@@ -76,10 +76,10 @@ def x_to_wsu(x_input, y_title, user_idx, params):
 
     if cct2 is not None and cct3 is not None:
         x_total = tf.concat(axis=2, values=[cct1, cct2, cct3])
-        print('W%sU model' % ('S' if embed_slot else 'X'))
+        print('T%sU model' % ('S' if embed_slot else 'X'))
     elif cct2 is not None:
         x_total = tf.concat(axis=2, values=[cct1, cct2])
-        print('W%s model' % ('S' if embed_slot else 'X'))
+        print('T%s model' % ('S' if embed_slot else 'X'))
     elif cct3 is not None:
         x_total = tf.concat(axis=2, values=[cct1, cct3])
         print('%sU model' % ('S' if embed_slot else 'X'))
