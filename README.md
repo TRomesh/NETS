@@ -46,6 +46,7 @@ $ sudo pip install gensim nltk numpy python-dateutil scikit-learn
 
 # Clone this repository
 ```
+$ cd
 $ git clone https://github.com/donghyeonk/NETS.git
 ```
 
@@ -53,8 +54,6 @@ $ git clone https://github.com/donghyeonk/NETS.git
 ```
 $ cd NETS
 ```
-
-
 
 # Create your user vector
 * Get dataset from your Google calendar
@@ -71,7 +70,7 @@ $ python3 get_google_caleandar_events.py --noauth_local_webserver
 * Check if &lt;primary_calendar_id>_events.txt file is in **LSTM_TSU/data/inputs** directory.
     * ex. primary@gmail.com_events.txt
 * Event fields
-    * Six columns: [year, week, sequence in a week, duration (min), title, start time slot (0~335)]
+    * Six columns: `[year, week, sequence in a week, duration (min), title, start time slot (0~335)]`
         * e.g., 2017\t4\t0\t60\tMeeting with Jake\t25
     * Sorted by year, week and sequence in a week
     * Time slot unit: 30 minutes
@@ -101,3 +100,33 @@ $ cd LSTM_TSU
 ```
 $ python3 main.py
 ```
+
+* An Example of a result of LSTM_TSU
+
+TSU model
+
+Input tensor Tensor("Reshape:0", shape=(?, 936), dtype=float32) dimension 936
+
+pre-concat version
+
+Word embedding initialized `[ 0.00974513 -0.122094    0.00709154  0.10331635  0.03429483]`
+
+Slot embedding initialized `[-0.01252203  0.04094937  0.03608277  0.03158236 -0.051265  ]`
+
+User embedding initialized `[ 0.00049178  0.00017338  0.00033416  0.00013555  0.00031524] prefix_prob_sum 1.00000000202`
+
+Resuming! => Model restored from /home/<YOUR_HOME>/NETS/LSTM_TSU/result/pretrained/model.ckpt-1809
+
+Input 168 output 168
+
+`[Model ready!]`
+
+\### TESTING ###
+
+Model restored from /home/<YOUR_HOME>/NETS/LSTM_TSU/result/pretrained/model.ckpt-1809
+
+Testing loss: 3.916 Top1 Accuracy: 7.609% Top5 Accuracy: 26.087% step: 1809
+
+Elapsed Time: 0.00 Minutes <END_TIME>
+
+\### END OF TESTING ###
