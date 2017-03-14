@@ -61,11 +61,11 @@ $ cd NETS
     * Please see [python quick start document](https://developers.google.com/google-apps/calendar/quickstart/python#step_1_turn_on_the_api_name).
 ```
 # If your browser is on local machine
-$ python3 get_google_caleandar_events.py
+$ python3 get_google_calendar_events.py
 ```
 ```
 # If your browser is on different machine
-$ python3 get_google_caleandar_events.py --noauth_local_webserver
+$ python3 get_google_calendar_events.py --noauth_local_webserver
 ```
 * Check if &lt;primary_calendar_id>_events.txt file is in **LSTM_TSU/data/inputs** directory.
     * ex. primary@gmail.com_events.txt
@@ -113,7 +113,7 @@ Word embedding initialized `[ 0.00974513 -0.122094    0.00709154  0.10331635  0.
 
 Slot embedding initialized `[-0.01252203  0.04094937  0.03608277  0.03158236 -0.051265  ]`
 
-User embedding initialized `[ 0.00049178  0.00017338  0.00033416  0.00013555  0.00031524] prefix_prob_sum 1.00000000202`
+User embedding initialized `[ 0.00049178  0.00017338  0.00033416  0.00013555  0.00031524]` prefix_prob_sum 1.00000000202
 
 Resuming! => Model restored from /home/<YOUR_HOME>/NETS/LSTM_TSU/result/pretrained/model.ckpt-1809
 

@@ -1,5 +1,8 @@
 #!/usr/bin/env bash
 
+
+echo 'Downloading... It may take several minutes to receive files'
+
 wget -P LSTM_TSU/data/embedding/ https://s3-us-west-1.amazonaws.com/ml-man/user_vectors\ \(avg\).336d.pkl
 wget -P LSTM_TSU/data/embedding/ https://s3-us-west-1.amazonaws.com/ml-man/glove_init_special.300d.pkl
 wget -P LSTM_TSU/result/pretrained/ https://s3-us-west-1.amazonaws.com/ml-man/model_pretrained/checkpoint
