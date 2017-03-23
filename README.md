@@ -2,13 +2,13 @@
 Donghyeon Kim and Jinhyuk Lee et al.
 
 # Prerequisites
-* GPU
+* nVidia GPU, CUDA
 * Python
     * Linux or Mac OS: [Python 3.4 or greater](https://www.python.org/downloads/)
     * Windows: [Python 3.5 or greater](https://www.python.org/downloads/)
 * TensorFlow r1.0 or greater, GPU enabled
 * A Google account, Google Calendar API client
-* Gensim, nltk, numpy, python-dateutil, scikit-learn
+* Gensim, nltk, numpy, python-dateutil, scikit-learn, httplib2
 
 # Prerequisites Installation Guide
 * Linux: Ubuntu 16.04 LTS
@@ -16,14 +16,14 @@ Donghyeon Kim and Jinhyuk Lee et al.
 $ sudo apt install python3-pip
 $ sudo pip3 install tensorflow-gpu
 $ sudo pip3 install --upgrade google-api-python-client
-$ sudo pip3 install gensim nltk numpy python-dateutil scikit-learn
+$ sudo pip3 install gensim nltk numpy python-dateutil scikit-learn httplib2
 ```
 
 * Mac OS
 ```
 $ sudo pip install tensorflow-gpu
 $ sudo pip install --upgrade google-api-python-client
-$ sudo pip install gensim nltk numpy python-dateutil scikit-learn
+$ sudo pip install gensim nltk numpy python-dateutil scikit-learn httplib2
 ```
 
 * Windows
@@ -37,7 +37,7 @@ $ sudo pip install gensim nltk numpy python-dateutil scikit-learn
 ```
 # python 3.5.x 64-bit
 > pip install tensorflow-gpu
-> pip install nltk python-dateutil
+> pip install nltk python-dateutil httplib2
 > pip install .\Downloads\numpy-1.12.0+mkl-cp35-cp35m-win_amd64.whl
 > pip install .\Downloads\scipy-0.18.1-cp35-cp35m-win_amd64.whl
 > pip install .\Downloads\gensim-0.13.4.1-cp35-cp35m-win_amd64.whl
@@ -103,6 +103,8 @@ $ python3 main.py
 
 * An Example of a result of LSTM_TSU
 
+...
+
 TSU model
 
 Input tensor Tensor("Reshape:0", shape=(?, 936), dtype=float32) dimension 936
@@ -130,3 +132,8 @@ Testing loss: 3.916 Top1 Accuracy: 7.609% Top5 Accuracy: 26.087% step: 1809
 Elapsed Time: 0.00 Minutes &lt;END_TIME>
 
 \### END OF TESTING ###
+
+
+# Troubleshooting
+* Error: InvalidArgumentError (see above for traceback): indices\[0,0,5] = -1 is not in \[0, 50000)
+    * Solution: Check if tensorflow-gpu is installed and that can detect your GPU (see https://github.com/fchollet/keras/issues/3043)
