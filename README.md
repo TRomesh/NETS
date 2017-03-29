@@ -27,8 +27,8 @@ $ sudo pip install gensim nltk numpy python-dateutil scikit-learn httplib2
 ```
 
 * Windows
-    * "TensorFlow only supports version 3.5.x of Python on Windows." [[TF home](https://www.tensorflow.org/install/install_windows)] 2017-2-23
-        * [Download python-3.5.3](https://www.python.org/ftp/python/3.5.3/python-3.5.3-amd64.exe) and install
+    * "TensorFlow only supports version 3.5.x of Python on Windows.", according to [[TF home](https://www.tensorflow.org/install/install_windows#installing_with_native_pip)] 2017-2-23
+        * [Download python-3.5.3](https://www.python.org/downloads/release/python-353/) and install
     * Download and install pre-built binaries:
 [numpy+mkl](http://www.lfd.uci.edu/~gohlke/pythonlibs/#numpy)
 [scipy](http://www.lfd.uci.edu/~gohlke/pythonlibs/#scipy)
@@ -38,9 +38,9 @@ $ sudo pip install gensim nltk numpy python-dateutil scikit-learn httplib2
 # python 3.5.x 64-bit
 > pip install tensorflow-gpu
 > pip install nltk python-dateutil httplib2
-> pip install .\Downloads\numpy-1.12.0+mkl-cp35-cp35m-win_amd64.whl
-> pip install .\Downloads\scipy-0.18.1-cp35-cp35m-win_amd64.whl
-> pip install .\Downloads\gensim-0.13.4.1-cp35-cp35m-win_amd64.whl
+> pip install .\Downloads\numpy-1.12.1+mkl-cp35-cp35m-win_amd64.whl
+> pip install .\Downloads\scipy-0.19.0-cp35-cp35m-win_amd64.whl
+> pip install .\Downloads\gensim-1.0.1-cp35-cp35m-win_amd64.whl
 > pip install .\Downloads\scikit_learn-0.18.1-cp35-cp35m-win_amd64.whl
 ```
 
@@ -68,7 +68,7 @@ $ python3 get_google_calendar_events.py
 $ python3 get_google_calendar_events.py --noauth_local_webserver
 ```
 * Check if &lt;primary_calendar_id>_events.txt file is in **LSTM_TSU/data/inputs** directory.
-    * ex. primary@gmail.com_events.txt
+    * ex. primary_at_gmail.com_events.txt
 * Event fields
     * Six columns: `[year, week, sequence in a week, duration (min), title, start time slot (0~335)]`
         * e.g., 2017\t4\t0\t60\tMeeting with Jake\t25

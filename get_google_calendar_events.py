@@ -217,7 +217,8 @@ def main():
 
     # write a file
     invalid_chars = ['\0', '\\', '/', '*', '?', '"', '<', '>', '|']  # Unix, Windows
-    output_file = output_dir + '/' + delete_invalid_chars_4_filename(primary_calendar_id, invalid_chars) + '_events.txt'
+    output_file = output_dir + '/' + delete_invalid_chars_4_filename(primary_calendar_id.replace('@', '_at_'),
+                                                                     invalid_chars) + '_events.txt'
     if os.path.exists(output_file):
         print('Overwrite existing file:', output_file)
     else:
